@@ -1,0 +1,32 @@
+{
+	"name": "2d-director",
+	"version": "0.0.0",
+	"description": "2d engine where you dont define every frame, but give instructions what to do: move, scale, rotate, etс.  and how to do: fast, slow, smoth, with animation, etc",
+	"exports": {
+		"types": "./dist/*.d.ts",
+		"import": "./dist/*.js"
+	},
+	"scripts": {
+		"clean": "rimraf dist & rimrag preview/js",
+		"watch": "npm run clean & rollup -c rollup.config.mjs --watch",
+		"preview": "http-server ./preview",
+		"dev": "concurrently \"npm:watch\" \"npm:preview\"",
+		"build": "npm run clean & rollup -c rollup.config.mjs"
+	},
+	"keywords": [
+		"2d-graphics",
+		"graphics",
+		"canvas"
+	],
+	"author": "Vladislav Nikolaev",
+	"license": "ISC",
+	"devDependencies": {
+		"@rollup/plugin-typescript": "^11.1.6",
+		"http-server": "^14.1.1",
+		"prettier": "3.3.3",
+		"rimraf": "^6.0.1",
+		"rollup": "^4.22.4",
+		"tslib": "^2.7.0",
+		"typescript": "^5.6.2"
+	}
+}
