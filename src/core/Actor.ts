@@ -4,20 +4,10 @@ import { Vector } from "src/utils/Vector";
 class Actor {
 	position: Vector;
 	sprite: Sprite;
-	pivot: Vector; // percents
 
-	constructor({
-		position,
-		sprite,
-		pivot,
-	}: {
-		position: Vector;
-		sprite: Sprite;
-		pivot?: Vector;
-	}) {
+	constructor({ position, sprite }: { position: Vector; sprite: Sprite }) {
 		this.position = position;
 		this.sprite = sprite;
-		this.pivot = pivot ?? new Vector(0.5, 0.5);
 	}
 
 	update() {}

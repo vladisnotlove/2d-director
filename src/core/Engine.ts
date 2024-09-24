@@ -1,32 +1,37 @@
-import { Viewport } from "src/core/Viewport";
 import { Scene } from "src/core/Scene";
 import { Loop } from "src/utils/Loop";
+import { Vector } from "src/utils/Vector";
+import { Painter } from "src/core/Painter";
 
 class Engine {
-	viewport: Viewport;
-	loop: Loop;
-
-	background?: string;
+	painter: Painter;
+	background: string | null;
 	scene: Scene;
+	loop: Loop;
 
 	debug: boolean;
 
 	constructor({
 		rootElement,
-		background,
+		viewport,
 		scene,
+		debug,
 	}: {
 		rootElement: HTMLElement;
-		background?: string;
+		viewport: {
+			background?: string;
+			size: Vector;
+		};
 		scene: Scene;
+		debug?: boolean;
 	}) {
-		this.viewport = new Viewport({ rootElement });
+		this.painter = new Painter({ rootElement, size: viewport.size });
+		this.background = viewport.background ?? null;
+		this.scene = scene;
 		this.loop = new Loop(() => {
 			this.update();
 		});
-
-		this.background = background;
-		this.scene = scene;
+		this.debug = debug ?? false;
 	}
 
 	start() {
@@ -38,18 +43,34 @@ class Engine {
 	}
 
 	update() {
-		this.viewport.clear();
-
-		this.viewport.position = this.scene.camera.position;
-		this.viewport.zoom = this.scene.camera.zoom;
+		this.painter.clear();
 
 		if (this.background) {
-			this.viewport.drawBackground(this.background);
+			this.painter.drawBackground(this.background);
+		}
+
+		if (this.debug) {
+			const gridCellSize = new Vector(25, 25);
+			const gridStart = this.painter.size
+				.multiply(-0.5)
+				.subtract(
+					new Vector(
+						this.scene.camera.position.x % gridCellSize.x,
+						this.scene.camera.position.y % gridCellSize.y,
+					).floor(),
+				);
+
+			this.painter.drawGrid(gridStart, gridCellSize);
+			this.painter.drawAxis(this.scene.camera.position.multiply(-1));
+			this.painter.drawCrosshair(new Vector(0, 0));
 		}
 
 		this.scene.actors.forEach((actor) => {
 			actor.update();
-			this.viewport.drawActor(actor);
+			const positionInPainter = actor.position.subtract(
+				this.scene.camera.position,
+			);
+			this.painter.drawSprite(actor.sprite, positionInPainter);
 		});
 	}
 }

@@ -4,9 +4,18 @@ class Sprite {
 	src: string;
 	status: "loading" | "success" | "error";
 	imageElement: HTMLImageElement;
+	pivot: Vector; // percents
 	size: Vector;
 
-	constructor({ src, size }: { src: string; size?: Vector }) {
+	constructor({
+		src,
+		size,
+		pivot,
+	}: {
+		src: string;
+		size?: Vector;
+		pivot?: Vector;
+	}) {
 		this.src = src;
 		this.status = "loading";
 
@@ -23,7 +32,9 @@ class Sprite {
 		};
 		this.imageElement.src = src;
 
-		this.size = new Vector(this.imageElement.width, this.imageElement.height);
+		this.pivot = pivot ?? new Vector(0.5, 0.5);
+		this.size =
+			size ?? new Vector(this.imageElement.width, this.imageElement.height);
 	}
 }
 

@@ -9,22 +9,25 @@ window.addEventListener("load", () => {
 	if (rootElement) {
 		const engine = new Engine({
 			rootElement: rootElement,
+			viewport: {
+				size: new Vector(200, 200),
+			},
 			scene: new Scene({
 				actors: [
 					new Actor({
 						position: new Vector(0, 0),
-						sprite: new Sprite({ src: "img/cat.svg" }),
-					}),
-					new Actor({
-						position: new Vector(100, 0),
-						sprite: new Sprite({ src: "img/cat.svg" }),
+						sprite: new Sprite({
+							src: "img/cat.svg",
+							size: new Vector(50, 50),
+						}),
 					}),
 				],
 				camera: {
-					position: new Vector(0, 0),
+					position: new Vector(-60, -60),
 					zoom: 1,
 				},
 			}),
+			debug: true,
 		});
 		engine.start();
 	}

@@ -27,6 +27,14 @@ class Vector {
 		return new Vector(Math.round(this.x), Math.round(this.y));
 	}
 
+	ceil() {
+		return new Vector(Math.ceil(this.x), Math.ceil(this.y));
+	}
+
+	floor() {
+		return new Vector(Math.floor(this.x), Math.floor(this.y));
+	}
+
 	multiply(value: number | Vector) {
 		if (typeof value === "number") {
 			return new Vector(this.x * value, this.y * value);
@@ -58,7 +66,7 @@ class Vector {
 		const delta = to.subtract(from);
 		const deltaLength = delta.length;
 		const deltaNormilized = delta.normalize();
-		const vectors = [];
+		const vectors: Vector[] = [];
 		for (let value = 0; value < deltaLength; value += step) {
 			vectors.push(from.add(deltaNormilized.multiply(value)));
 		}
