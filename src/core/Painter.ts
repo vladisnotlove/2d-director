@@ -85,7 +85,7 @@ class Painter {
 		const realSize = this.toRealSize(size);
 
 		this.ctx.drawImage(
-			sprite.imageElement,
+			sprite.image,
 			realPosition.x,
 			realPosition.y,
 			realSize.x,

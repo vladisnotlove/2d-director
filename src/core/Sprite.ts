@@ -1,40 +1,55 @@
 import { Vector } from "src/utils/Vector";
 
 class Sprite {
-	src: string;
-	status: "loading" | "success" | "error";
-	imageElement: HTMLImageElement;
+	readonly image: HTMLCanvasElement;
 	pivot: Vector; // percents
 	size: Vector;
 
+	get originSize() {
+		return new Vector(this.image.width, this.image.height);
+	}
+
 	constructor({
-		src,
-		size,
+		image,
 		pivot,
+		size,
 	}: {
-		src: string;
-		size?: Vector;
+		image: HTMLCanvasElement;
 		pivot?: Vector;
+		size?: Vector;
 	}) {
-		this.src = src;
-		this.status = "loading";
-
-		this.imageElement = new Image();
-		this.imageElement.onload = () => {
-			this.status = "success";
-			this.size = new Vector(
-				this.imageElement.width,
-				this.imageElement.height,
-			);
-		};
-		this.imageElement.onerror = () => {
-			this.status = "error";
-		};
-		this.imageElement.src = src;
-
+		this.image = image;
 		this.pivot = pivot ?? new Vector(0.5, 0.5);
-		this.size =
-			size ?? new Vector(this.imageElement.width, this.imageElement.height);
+		this.size = size ?? new Vector(this.image.width, this.image.height);
+	}
+
+	static fromUrl(
+		url: string,
+		options?: Omit<ConstructorParameters<typeof Sprite>[0], "image">,
+	) {
+		return new Promise((resolve, reject) => {
+			const imageElement = new Image();
+			const canvasElement = document.createElement("canvas");
+
+			imageElement.onload = () => {
+				canvasElement.width = imageElement.width;
+				canvasElement.height = imageElement.height;
+
+				const ctx = canvasElement.getContext("2d");
+				if (!ctx) {
+					reject(new Error("Context is not provided"));
+					return;
+				}
+				ctx.drawImage(imageElement, 0, 0);
+
+				const sprite = new Sprite({
+					image: canvasElement,
+					...options,
+				});
+
+				resolve(sprite);
+			};
+		});
 	}
 }
 

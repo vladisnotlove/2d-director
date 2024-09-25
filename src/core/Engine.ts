@@ -28,8 +28,8 @@ class Engine {
 		this.painter = new Painter({ rootElement, size: viewport.size });
 		this.background = viewport.background ?? null;
 		this.scene = scene;
-		this.loop = new Loop(() => {
-			this.update();
+		this.loop = new Loop((deltaTime) => {
+			this.update(deltaTime);
 		});
 		this.debug = debug ?? false;
 	}
@@ -42,7 +42,7 @@ class Engine {
 		this.loop.stop();
 	}
 
-	update() {
+	update(deltaTime: number) {
 		this.painter.clear();
 
 		if (this.background) {
@@ -66,7 +66,7 @@ class Engine {
 		}
 
 		this.scene.actors.forEach((actor) => {
-			actor.update();
+			actor.update(deltaTime);
 			const positionInPainter = actor.position.subtract(
 				this.scene.camera.position,
 			);
