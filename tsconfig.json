@@ -3,6 +3,7 @@
 		"baseUrl": "./",
 		"lib": ["es5", "es6", "dom"],
 		"target": "ES6",
+		"moduleResolution": "node",
 		"noEmit": true,
 		"declaration": true,
 		"declarationDir": "dist",

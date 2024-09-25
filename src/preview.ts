@@ -1,8 +1,8 @@
 import { Actor } from "src/core/Actor";
-import { Animation } from "src/core/Animation";
+import { Animation } from "src/features/animator/Animation";
 import { Engine } from "src/core/Engine";
+import { Path } from "src/features/motor";
 import { Scene } from "src/core/Scene";
-import { Sprite } from "src/core/Sprite";
 import { Vector } from "src/utils/Vector";
 
 window.addEventListener("load", async () => {
@@ -64,7 +64,7 @@ window.addEventListener("load", async () => {
 		const engine = new Engine({
 			rootElement: rootElement,
 			viewport: {
-				size: new Vector(200, 200),
+				size: new Vector(400, 400),
 			},
 			scene: new Scene({
 				actors: [actor],
@@ -77,6 +77,30 @@ window.addEventListener("load", async () => {
 		});
 
 		engine.start();
-		actor.animator.startAnimation(catRun, { looped: true });
+
+		actor.animator.animate(catRun, { looped: true });
+		setTimeout(() => {
+			actor.motor.move(
+				new Path({
+					start: new Vector(0, 0),
+					steps: [
+						{
+							position: new Vector(0, -150),
+							acceleration: 0.001,
+							velocity: 0.3,
+						},
+						{
+							position: new Vector(0, 0),
+							acceleration: 0.001,
+							velocity: 0,
+						},
+					],
+				}),
+			);
+		}, 800);
+
+		setTimeout(() => {
+			actor.motor.stop();
+		}, 1000);
 	}
 });

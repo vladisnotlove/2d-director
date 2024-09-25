@@ -1,4 +1,5 @@
-import { Animator } from "src/core/features/Animator";
+import { Animator } from "src/features/animator/Animator";
+import { Motor } from "src/features/motor";
 import { Sprite } from "src/core/Sprite";
 import { Vector } from "src/utils/Vector";
 
@@ -7,15 +8,18 @@ class Actor {
 	sprite: Sprite;
 
 	animator: Animator;
+	motor: Motor;
 
 	constructor({ position, sprite }: { position: Vector; sprite: Sprite }) {
 		this.position = position;
 		this.sprite = sprite;
-		this.animator = new Animator();
+		this.animator = new Animator(this);
+		this.motor = new Motor(this);
 	}
 
 	update(deltaTime: number) {
-		this.animator.update({ actor: this, deltaTime });
+		this.animator.update(deltaTime);
+		this.motor.update(deltaTime);
 	}
 }
 

@@ -1,8 +1,10 @@
 import { Actor } from "src/core/Actor";
-import { Animation } from "src/core/Animation";
-import { IFeature } from "src/core/features/IFeature";
+import { Animation } from "./Animation";
+import { IFeature } from "src/features/IFeature";
 
 class Animator implements IFeature {
+	actor: Actor;
+
 	private animation?: Animation;
 	private frameIndex: number;
 	private animationTime: number;
@@ -11,7 +13,8 @@ class Animator implements IFeature {
 
 	private status?: "playing" | "stopped";
 
-	constructor() {
+	constructor(actor: Actor) {
+		this.actor = actor;
 		this.animation = undefined;
 		this.frameIndex = 0;
 		this.animationTime = 0;
@@ -20,7 +23,7 @@ class Animator implements IFeature {
 		this.status = "stopped";
 	}
 
-	update({ actor, deltaTime }: { actor: Actor; deltaTime: number }) {
+	update(deltaTime: number) {
 		if (this.animation && this.status !== "stopped") {
 			this.updateTime += deltaTime;
 
@@ -35,13 +38,13 @@ class Animator implements IFeature {
 				}
 				this.frameIndex = this.frameIndex % this.animation.frames.length;
 				const frame = this.animation.frames[this.frameIndex];
-				actor.sprite = frame.sprite;
+				this.actor.sprite = frame.sprite;
 				this.animationTime += frame.duration;
 			}
 		}
 	}
 
-	startAnimation(animation: Animation, options?: { looped?: boolean }) {
+	animate(animation: Animation, options?: { looped?: boolean }) {
 		const looped = options?.looped ?? false;
 		this.animation = animation;
 		this.frameIndex = 0;

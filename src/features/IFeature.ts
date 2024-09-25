@@ -1,7 +1,8 @@
 import { Actor } from "src/core/Actor";
 
 interface IFeature {
-	update({ actor, deltaTime }: { actor: Actor; deltaTime: number }): void;
+	actor: Actor;
+	update(deltaTime): void;
 }
 
 export { IFeature };

@@ -73,6 +73,10 @@ class Vector {
 		vectors.push(to);
 		return vectors;
 	}
+
+	static equals(a: Vector, b: Vector) {
+		return a.x === b.x && a.y === b.y;
+	}
 }
 
 export { Vector };
