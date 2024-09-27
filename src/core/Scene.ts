@@ -21,6 +21,10 @@ class Scene {
 		this.actors = actors;
 		this.camera = camera;
 	}
+
+	getActorsWithCollider() {
+		return this.actors.filter((actor) => actor.collider !== undefined);
+	}
 }
 
 export { Scene };

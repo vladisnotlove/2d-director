@@ -58,7 +58,6 @@ window.addEventListener("load", async () => {
 
 		const actor = new Actor({
 			position: new Vector(0, 0),
-			sprite: catRun.frames[0].sprite,
 		});
 
 		const engine = new Engine({

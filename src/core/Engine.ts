@@ -65,13 +65,33 @@ class Engine {
 			this.painter.drawCrosshair(new Vector(0, 0));
 		}
 
-		this.scene.actors.forEach((actor) => {
+		// update actor
+		for (const actor of this.scene.actors) {
 			actor.update(deltaTime);
-			const positionInPainter = actor.position.subtract(
-				this.scene.camera.position,
-			);
-			this.painter.drawSprite(actor.sprite, positionInPainter);
-		});
+		}
+
+		// draw sprite of actor
+		for (const actor of this.scene.actors) {
+			if (actor.sprite) {
+				const positionInPainter = actor.position.subtract(
+					this.scene.camera.position,
+				);
+				this.painter.drawSprite(actor.sprite, positionInPainter);
+			}
+		}
+
+		// trigger onCollision
+		const actors = this.scene.getActorsWithCollider();
+		for (const actorA of actors) {
+			for (const actorB of actors) {
+				if (actorA.onCollision) {
+					const collision = actorA.getCollision(actorB);
+					if (collision) {
+						actorA.onCollision(collision);
+					}
+				}
+			}
+		}
 	}
 }
 
