@@ -1,58 +1,76 @@
 import { Actor } from "src/core/Actor";
-import { Animation } from "./Animation";
-import { IFeature } from "src/features/IFeature";
+import { IFeature } from "../IFeature";
+import { Animation, Track, Frame } from "./Animation";
 
-class Animator implements IFeature {
+class NumberTrackPlayer {
+	track: Track<number>;
+	private currentTime: number;
+	private currentFrame?: Frame<number>;
+	private currentFrameIndex: number;
+
+	constructor(track: Track<number>) {
+		this.track = track;
+		this.currentTime = 0;
+		this.currentFrame = track[0];
+		this.currentFrameIndex = 0;
+	}
+
+	addTime(deltaTime: number) {
+		if (!this.currentFrame) return;
+		this.currentTime += deltaTime;
+		if (this.currentTime > this.currentFrame.duration) {
+			this.currentTime -= this.currentFrame.duration;
+			this.currentFrameIndex++;
+			this.currentFrame = this.track[this.currentFrameIndex];
+		}
+	}
+
+	getCurrentValue() {
+		if (!this.currentFrame) return;
+		const relativeTime = this.currentTime / this.currentFrame.duration;
+		const scale = this.currentFrame.timingFunction(relativeTime);
+		return (
+			this.currentFrame.from +
+			(this.currentFrame.to - this.currentFrame.from) * scale
+		);
+	}
+
+	isFinished() {
+		return !this.currentFrame;
+	}
+}
+
+export class Animator implements IFeature {
 	actor: Actor;
-
-	private animation?: Animation;
-	private frameIndex: number;
-	private animationTime: number;
-	private updateTime: number;
-	private looped: boolean;
-
-	private status?: "playing" | "stopped";
+	animation?: Animation;
+	players: {
+		opacity?: NumberTrackPlayer;
+	};
 
 	constructor(actor: Actor) {
 		this.actor = actor;
 		this.animation = undefined;
-		this.frameIndex = 0;
-		this.animationTime = 0;
-		this.updateTime = 0;
-		this.looped = false;
-		this.status = "stopped";
+		this.players = {
+			opacity: undefined,
+		};
 	}
 
-	update(deltaTime: number) {
-		if (this.animation && this.status !== "stopped") {
-			this.updateTime += deltaTime;
-
-			if (this.updateTime > this.animationTime) {
-				this.frameIndex++;
-				if (
-					this.frameIndex >= this.animation.frames.length &&
-					!this.looped
-				) {
-					this.status = "stopped";
-					return;
-				}
-				this.frameIndex = this.frameIndex % this.animation.frames.length;
-				const frame = this.animation.frames[this.frameIndex];
-				this.actor.sprite = frame.sprite;
-				this.animationTime += frame.duration;
+	update(deltaTime: any): void {
+		if (this.players) {
+			if (this.players.opacity && !this.players.opacity.isFinished()) {
+				this.players.opacity.addTime(deltaTime);
+				const opacity = this.players.opacity.getCurrentValue();
+				if (opacity !== undefined) this.actor.opacity = opacity;
 			}
 		}
 	}
 
-	animate(animation: Animation, options?: { looped?: boolean }) {
-		const looped = options?.looped ?? false;
+	animate(animation: Animation) {
 		this.animation = animation;
-		this.frameIndex = 0;
-		this.animationTime = 0;
-		this.updateTime = 0;
-		this.looped = looped;
-		this.status = "playing";
+		if (this.animation.tracks.opacity) {
+			this.players.opacity = new NumberTrackPlayer(
+				this.animation.tracks.opacity,
+			);
+		}
 	}
 }
-
-export { Animator };

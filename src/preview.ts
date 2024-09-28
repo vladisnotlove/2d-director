@@ -1,5 +1,6 @@
 import { Actor } from "src/core/Actor";
-import { Animation } from "src/features/animator/Animation";
+import { SpriteAnimation } from "src/features/sprite-animator";
+import { Animation } from "src/features/animator";
 import { Engine } from "src/core/Engine";
 import { Path } from "src/features/motor";
 import { Scene } from "src/core/Scene";
@@ -9,7 +10,7 @@ window.addEventListener("load", async () => {
 	const rootElement = document.getElementById("root");
 
 	if (rootElement) {
-		const catRun = await Animation.fromUrl("img/cat-run.svg", {
+		const catRun = await SpriteAnimation.fromUrl("img/cat-run.svg", {
 			frameConfigs: [
 				{
 					slice: {
@@ -56,8 +57,19 @@ window.addEventListener("load", async () => {
 			],
 		});
 
+		const fadeIn = new Animation(
+			new Animation({
+				tracks: {
+					opacity: [
+						{ from: 1, to: 0, duration: 1000, timingFunction: (x) => x },
+					],
+				},
+			}),
+		);
+
 		const actor = new Actor({
 			position: new Vector(0, 0),
+			opacity: 0.5,
 		});
 
 		const engine = new Engine({
@@ -77,26 +89,8 @@ window.addEventListener("load", async () => {
 
 		engine.start();
 
-		actor.animator.animate(catRun, { looped: true });
-		setTimeout(() => {
-			actor.motor.move(
-				new Path({
-					start: new Vector(0, 0),
-					steps: [
-						{
-							position: new Vector(0, -150),
-							acceleration: 0.001,
-							velocity: 0.3,
-						},
-						{
-							position: new Vector(0, 0),
-							acceleration: 0.001,
-							velocity: 0,
-						},
-					],
-				}),
-			);
-		}, 800);
+		actor.spriteAnimator.animate(catRun, { looped: true });
+		actor.animator.animate(fadeIn);
 
 		setTimeout(() => {
 			actor.motor.stop();

@@ -74,6 +74,7 @@ class Painter {
 		options?: {
 			pivot?: Vector;
 			size?: Vector;
+			opacity?: number;
 		},
 	) {
 		const size = options?.size ?? sprite.size;
@@ -84,6 +85,7 @@ class Painter {
 		);
 		const realSize = this.toRealSize(size);
 
+		this.ctx.globalAlpha = options?.opacity ?? 1;
 		this.ctx.drawImage(
 			sprite.image,
 			realPosition.x,
@@ -91,6 +93,7 @@ class Painter {
 			realSize.x,
 			realSize.y,
 		);
+		this.ctx.globalAlpha = 1;
 	}
 
 	drawGrid(start: Vector, cellSize: Vector = new Vector(25, 25)) {

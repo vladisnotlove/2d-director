@@ -76,7 +76,9 @@ class Engine {
 				const positionInPainter = actor.position.subtract(
 					this.scene.camera.position,
 				);
-				this.painter.drawSprite(actor.sprite, positionInPainter);
+				this.painter.drawSprite(actor.sprite, positionInPainter, {
+					opacity: actor.opacity,
+				});
 			}
 		}
 

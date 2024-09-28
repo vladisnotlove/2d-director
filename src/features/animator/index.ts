@@ -1,2 +1,2 @@
-export * from "./Animation";
-export * from "./Animator";
+export { Animation } from "./Animation";
+export { Animator } from "./Animator";

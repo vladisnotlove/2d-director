@@ -1,14 +1,16 @@
-import { Animator } from "src/features/animator/Animator";
+import { SpriteAnimator } from "src/features/sprite-animator";
 import { Motor } from "src/features/motor";
 import { Sprite } from "src/core/Sprite";
 import { Vector } from "src/utils/Vector";
 import { Collider } from "src/core/Collider";
 import { Collision } from "src/core/Collision";
 import { Rect } from "src/utils/Rect";
+import { Animator } from "src/features/animator";
 
 class Actor {
 	// primary properties
 	position: Vector;
+	opacity: number;
 	sprite?: Sprite;
 	collider?: Collider;
 
@@ -16,31 +18,37 @@ class Actor {
 	onCollision?: (collision: Collision) => void;
 
 	// features
+	spriteAnimator: SpriteAnimator;
 	animator: Animator;
 	motor: Motor;
 
 	constructor({
 		position,
 		sprite,
+		opacity,
 		collider,
 		onCollision,
 	}: {
 		position: Vector;
+		opacity?: number;
 		sprite?: Sprite;
 		collider?: Collider;
 		onCollision?: (collision: Collision) => void;
 	}) {
 		this.position = position;
+		this.opacity = opacity ?? 1;
 		this.sprite = sprite;
 		this.collider = collider;
 		this.onCollision = onCollision;
 
 		this.animator = new Animator(this);
+		this.spriteAnimator = new SpriteAnimator(this);
 		this.motor = new Motor(this);
 	}
 
 	update(deltaTime: number) {
 		this.animator.update(deltaTime);
+		this.spriteAnimator.update(deltaTime);
 		this.motor.update(deltaTime);
 	}
 
